@@ -1,4 +1,4 @@
-# Lama Dev School Management Dashboard
+# TrueSunshine School Management Dashboard
 
 ## Getting Started
 
