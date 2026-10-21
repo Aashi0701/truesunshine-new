@@ -1,9 +1,15 @@
 import twilio from "twilio";
 
-const client = twilio(
-  process.env.TWILIO_ACCOUNT_SID!,
-  process.env.TWILIO_AUTH_TOKEN!,
-);
+function getTwilioClient() {
+  const accountSid = process.env.TWILIO_ACCOUNT_SID;
+  const authToken = process.env.TWILIO_AUTH_TOKEN;
+
+  if (!accountSid || !authToken) {
+    throw new Error("Twilio credentials are not configured.");
+  }
+
+  return twilio(accountSid, authToken);
+}
 
 function formatPhoneNumber(phone: string) {
   const cleaned = phone.trim().replace(/\D/g, "");
@@ -16,33 +22,33 @@ function formatPhoneNumber(phone: string) {
     return `+91${cleaned}`;
   }
 
-  throw new Error(`Invalid phone number: ${phone}`);
+  throw new Error("Invalid Indian phone number format.");
 }
 
 export async function sendWhatsApp(to: string, message: string) {
-  const formattedNumber = formatPhoneNumber(to);
+  const configuredFrom = process.env.TWILIO_WHATSAPP_FROM;
 
-  if (!process.env.TWILIO_WHATSAPP_FROM) {
+  if (!configuredFrom) {
     throw new Error("TWILIO_WHATSAPP_FROM is not configured.");
   }
 
-  console.log("Sending WhatsApp through Twilio:", {
-    from: process.env.TWILIO_WHATSAPP_FROM,
-    to: formattedNumber,
-    messageLength: message.length,
-  });
+  const formattedNumber = formatPhoneNumber(to);
+  const client = getTwilioClient();
+
+  const from = configuredFrom.startsWith("whatsapp:")
+    ? configuredFrom
+    : `whatsapp:${configuredFrom}`;
 
   const response = await client.messages.create({
-    from: `whatsapp:${process.env.TWILIO_WHATSAPP_FROM}`,
+    from,
     to: `whatsapp:${formattedNumber}`,
     body: message,
   });
 
-  console.log("Twilio WhatsApp created successfully:", {
+  console.info("Twilio WhatsApp request submitted.", {
     sid: response.sid,
     status: response.status,
-    to: response.to,
-    from: response.from,
+    channel: "whatsapp",
   });
 
   return response;

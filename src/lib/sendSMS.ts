@@ -1,9 +1,15 @@
 import twilio from "twilio";
 
-const client = twilio(
-  process.env.TWILIO_ACCOUNT_SID!,
-  process.env.TWILIO_AUTH_TOKEN!,
-);
+function getTwilioClient() {
+  const accountSid = process.env.TWILIO_ACCOUNT_SID;
+  const authToken = process.env.TWILIO_AUTH_TOKEN;
+
+  if (!accountSid || !authToken) {
+    throw new Error("Twilio credentials are not configured.");
+  }
+
+  return twilio(accountSid, authToken);
+}
 
 function formatPhoneNumber(phone: string) {
   const cleaned = phone.trim().replace(/\D/g, "");
@@ -16,33 +22,29 @@ function formatPhoneNumber(phone: string) {
     return `+91${cleaned}`;
   }
 
-  throw new Error(`Invalid phone number: ${phone}`);
+  throw new Error("Invalid Indian phone number format.");
 }
 
 export async function sendSMS(to: string, message: string) {
-  const formattedNumber = formatPhoneNumber(to);
+  const from = process.env.TWILIO_PHONE_NUMBER;
 
-  if (!process.env.TWILIO_PHONE_NUMBER) {
+  if (!from) {
     throw new Error("TWILIO_PHONE_NUMBER is not configured.");
   }
 
-  console.log("Sending SMS through Twilio:", {
-    from: process.env.TWILIO_PHONE_NUMBER,
-    to: formattedNumber,
-    messageLength: message.length,
-  });
+  const formattedNumber = formatPhoneNumber(to);
+  const client = getTwilioClient();
 
   const response = await client.messages.create({
     body: message,
-    from: process.env.TWILIO_PHONE_NUMBER,
+    from,
     to: formattedNumber,
   });
 
-  console.log("Twilio SMS created successfully:", {
+  console.info("Twilio SMS request submitted.", {
     sid: response.sid,
     status: response.status,
-    to: response.to,
-    from: response.from,
+    channel: "sms",
   });
 
   return response;

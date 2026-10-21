@@ -1,4 +1,4 @@
-# TrueSunshine School Management Dashboard
+# True Sunshine School Management Dashboard
 
 ## Getting Started
 
@@ -20,6 +20,6 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 ## Learn More
 
-To learn more about Next.js, take a look at the following resources:
+To learn more about Next.js, take a look at the following resource:
 
 - [Next.js](https://nextjs.org/learn)

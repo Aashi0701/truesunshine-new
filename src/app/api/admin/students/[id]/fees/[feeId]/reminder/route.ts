@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { sendSMS } from "@/lib/sendSMS";
 import { sendWhatsApp } from "@/lib/sendWhatsApp";
+import { auth } from "@clerk/nextjs/server";
 
 type ReminderChannel = "whatsapp" | "sms";
 
@@ -14,6 +15,32 @@ interface RouteContext {
 
 export async function POST(request: NextRequest, { params }: RouteContext) {
   try {
+    const { userId } = await auth();
+
+    if (!userId) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Unauthorized.",
+        },
+        { status: 401 },
+      );
+    }
+
+    const admin = await prisma.admin.findUnique({
+      where: { id: userId },
+      select: { id: true },
+    });
+
+    if (!admin) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Forbidden. Administrator access is required.",
+        },
+        { status: 403 },
+      );
+    }
     const { id: studentId, feeId } = await params;
 
     if (!studentId || !feeId) {
@@ -219,19 +246,18 @@ TrueSunshine Educational Society`;
       },
     });
   } catch (error: unknown) {
-    console.error("Fee reminder error:", error);
+    console.error("Fee reminder failed:", error);
 
-    const twilioError = error as {
+    const providerError = error as {
       code?: string | number;
-      message?: string;
       status?: number;
     };
 
     return NextResponse.json(
       {
         success: false,
-        message: twilioError.message ?? "Failed to send fee reminder.",
-        code: twilioError.code ?? null,
+        message: "Failed to send fee reminder. Please try again later.",
+        code: providerError?.code ?? null,
       },
       { status: 500 },
     );
