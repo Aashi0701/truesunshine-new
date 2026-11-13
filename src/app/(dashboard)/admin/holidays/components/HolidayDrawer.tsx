@@ -33,7 +33,7 @@ export default function HolidayDrawer({
           ? "Create a new school holiday."
           : "Update holiday information."
       }
-      width="sm"
+      width="md"
       icon={<CalendarDays className="h-6 w-6" />}
       footer={
         <>

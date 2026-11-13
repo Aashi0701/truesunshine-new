@@ -96,7 +96,7 @@ export default function EventsTable({
                         {event.title}
                       </p>
 
-                      <p className="mt-0.5 max-w-[360px] truncate text-xs text-slate-400">
+                      <p className="mt-0.5 max-w-[280px] truncate text-xs text-slate-400">
                         {event.description}
                       </p>
                     </div>

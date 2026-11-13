@@ -213,7 +213,7 @@ export default async function ParentExamsPage({ searchParams }: Props) {
                 text-slate-950
               "
             >
-              {student.name}&apos;s Exams
+              Exams
             </h1>
 
             <FileCheck2 className="h-5 w-5 text-[#4B517D]" />

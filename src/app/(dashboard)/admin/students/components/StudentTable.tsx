@@ -43,21 +43,12 @@ export default function StudentTable({
 }: StudentTableProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  /*
-   * Always start the table at the left-most position
-   * when the displayed student list changes.
-   */
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollLeft = 0;
     }
   }, [students]);
 
-  /*
-   * Empty state is handled by EmptyStudents.
-   * Keep this component responsible only for rendering
-   * the student table.
-   */
   if (students.length === 0) {
     return null;
   }
@@ -66,28 +57,15 @@ export default function StudentTable({
     <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
       <div ref={scrollRef} className="hide-scrollbar overflow-x-auto">
         <table className="min-w-[1660px] w-full border-separate border-spacing-0">
-          {/* ==================================================
-              HEADER
-          ================================================== */}
+          {/* HEADER */}
 
           <thead>
             <tr className="text-left text-[11px] font-semibold uppercase tracking-wide text-slate-500">
               {/* Checkbox */}
 
               <th
-                className="
-                  sticky
-                  left-0
-                  z-40
-                  w-12
-                  min-w-12
-                  max-w-12
-                  border-b
-                  border-slate-200
-                  bg-slate-50
-                  px-3
-                  py-3
-                "
+                className="sticky left-0 z-40 w-12 min-w-12 max-w-12 border-b border-slate-200 
+                bg-slate-50 px-3 py-3"
               >
                 <Checkbox
                   checked={
@@ -104,21 +82,8 @@ export default function StudentTable({
               {/* Student Name */}
 
               <th
-                className="
-                  sticky
-                  left-12
-                  z-40
-                  w-[240px]
-                  min-w-[240px]
-                  max-w-[240px]
-                  border-b
-                  border-r
-                  border-slate-200
-                  bg-slate-50
-                  px-4
-                  py-3
-                  text-left
-                "
+                className="sticky left-12 z-40 w-[240px] min-w-[240px] max-w-[240px] border-b border-r
+               border-slate-200 bg-slate-50 px-4 py-3 text-left"
               >
                 Student Name
               </th>
@@ -173,25 +138,13 @@ export default function StudentTable({
 
               {/* Actions */}
 
-              <th
-                className="
-                  w-20
-                  min-w-20
-                  border-b
-                  border-slate-200
-                  px-3
-                  py-3
-                  text-center
-                "
-              >
+              <th className="w-20 min-w-20 border-b border-slate-200 px-3 py-3 text-center">
                 Actions
               </th>
             </tr>
           </thead>
 
-          {/* ==================================================
-              BODY
-          ================================================== */}
+          {/* BODY */}
 
           <tbody className="text-sm">
             {students.map((student) => {
@@ -201,34 +154,20 @@ export default function StudentTable({
                 <tr
                   key={student.id}
                   className={`
-                    group
-                    transition-colors
-                    hover:bg-slate-50
-                    ${isSelected ? "bg-indigo-50/60" : ""}
-                  `}
+  transition-colors
+  ${isSelected ? "bg-indigo-50" : "bg-white hover:bg-slate-50"}
+`}
                 >
-                  {/* ==================================================
-                      CHECKBOX
-                  ================================================== */}
+                  {/* CHECKBOX */}
 
                   <td
                     className={`
-                      sticky
-                      left-0
-                      z-30
-                      w-12
-                      min-w-12
-                      max-w-12
-                      border-b
-                      border-slate-100
-                      px-3
-                      py-3
-                      ${
-                        isSelected
-                          ? "bg-indigo-50/60"
-                          : "bg-white group-hover:bg-slate-50"
-                      }
-                    `}
+  sticky left-0 z-30
+  w-12 min-w-12 max-w-12
+  border-b border-slate-200
+  px-3 py-3
+  ${isSelected ? "bg-indigo-50" : "bg-white hover:bg-slate-50"}
+`}
                   >
                     <Checkbox
                       checked={isSelected}
@@ -238,32 +177,22 @@ export default function StudentTable({
                     />
                   </td>
 
-                  {/* ==================================================
-                      STUDENT
-                  ================================================== */}
+                  {/* STUDENT */}
 
                   <td
                     className={`
-                      sticky
-                      left-12
-                      z-30
-                      w-[240px]
-                      min-w-[240px]
-                      max-w-[240px]
-                      border-b
-                      border-r
-                      border-slate-200
-                      px-4
-                      py-2.5
-                      ${
-                        isSelected
-                          ? "bg-indigo-50/60"
-                          : "bg-white group-hover:bg-slate-50"
-                      }
-                    `}
+  sticky left-12 z-30
+  w-[240px] min-w-[240px] max-w-[240px]
+  border-b border-r border-slate-200
+  px-4 py-2.5
+  ${isSelected ? "bg-indigo-50" : "bg-white hover:bg-slate-50"}
+`}
                   >
                     <div className="flex items-center gap-3">
-                      <div className="relative h-9 w-9 shrink-0 overflow-hidden rounded-full border border-slate-200 bg-slate-100">
+                      <div
+                        className="relative h-9 w-9 shrink-0 overflow-hidden rounded-full border 
+                      border-slate-200 bg-slate-100"
+                      >
                         {student.image ? (
                           <Image
                             src={student.image}
@@ -272,7 +201,10 @@ export default function StudentTable({
                             className="object-cover"
                           />
                         ) : (
-                          <div className="flex h-full w-full items-center justify-center bg-indigo-100 text-sm font-semibold text-indigo-600">
+                          <div
+                            className="flex h-full w-full items-center justify-center bg-indigo-100 
+                          text-sm font-semibold text-indigo-600"
+                          >
                             {student.name.charAt(0)}
                           </div>
                         )}
@@ -282,47 +214,35 @@ export default function StudentTable({
                         <p className="truncate font-semibold text-slate-900">
                           {student.fullName}
                         </p>
-
-                        <p className="text-xs text-slate-400">Student</p>
                       </div>
                     </div>
                   </td>
 
-                  {/* ==================================================
-                      ADMISSION NO
-                  ================================================== */}
+                  {/* ADMISSION NO */}
 
                   <td className="border-b border-slate-100 px-4 py-3 text-slate-700">
                     {student.admissionNo}
                   </td>
 
-                  {/* ==================================================
-                      ROLL NO
-                  ================================================== */}
+                  {/* ROLL NO */}
 
                   <td className="border-b border-slate-100 px-4 py-3 text-slate-700">
                     {student.rollNo}
                   </td>
 
-                  {/* ==================================================
-                      CLASS
-                  ================================================== */}
+                  {/* CLASS */}
 
                   <td className="border-b border-slate-100 px-4 py-3 font-medium text-slate-700">
                     {student.className}
                   </td>
 
-                  {/* ==================================================
-                      ACADEMIC YEAR
-                  ================================================== */}
+                  {/* ACADEMIC YEAR */}
 
                   <td className="border-b border-slate-100 px-4 py-3 text-slate-700">
                     {student.academicYear}
                   </td>
 
-                  {/* ==================================================
-                      PARENT
-                  ================================================== */}
+                  {/* PARENT */}
 
                   <td className="border-b border-slate-100 px-4 py-3">
                     <span className="truncate font-medium text-slate-700">
@@ -330,9 +250,7 @@ export default function StudentTable({
                     </span>
                   </td>
 
-                  {/* ==================================================
-                      PHONE
-                  ================================================== */}
+                  {/* PHONE */}
 
                   <td className="border-b border-slate-100 px-4 py-3">
                     <div className="flex items-center gap-2 text-slate-600">
@@ -342,9 +260,7 @@ export default function StudentTable({
                     </div>
                   </td>
 
-                  {/* ==================================================
-                      EMAIL
-                  ================================================== */}
+                  {/* EMAIL */}
 
                   <td className="border-b border-slate-100 px-4 py-3">
                     <div className="flex min-w-0 items-center gap-2 text-slate-600">
@@ -356,21 +272,11 @@ export default function StudentTable({
                     </div>
                   </td>
 
-                  {/* ==================================================
-                      STATUS
-                  ================================================== */}
+                  {/* STATUS */}
 
                   <td className="border-b border-slate-100 px-4 py-3">
                     <span
-                      className={`
-                        inline-flex
-                        items-center
-                        gap-1.5
-                        rounded-full
-                        px-2.5
-                        py-1
-                        text-[11px]
-                        font-semibold
+                      className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold
                         ${
                           student.status === "ACTIVE"
                             ? "bg-emerald-50 text-emerald-700 ring-1 ring-inset ring-emerald-200"
@@ -379,10 +285,7 @@ export default function StudentTable({
                       `}
                     >
                       <span
-                        className={`
-                          h-1.5
-                          w-1.5
-                          rounded-full
+                        className={`h-1.5 w-1.5 rounded-full
                           ${
                             student.status === "ACTIVE"
                               ? "bg-emerald-500"
@@ -395,20 +298,9 @@ export default function StudentTable({
                     </span>
                   </td>
 
-                  {/* ==================================================
-                      ACTIONS
-                  ================================================== */}
+                  {/* ACTIONS */}
 
-                  <td
-                    className="
-                      border-b
-                      border-slate-100
-                      px-3
-                      py-2.5
-                      text-center
-                      align-middle
-                    "
-                  >
+                  <td className="border-b border-slate-100 px-3 py-2.5 text-center align-middle">
                     <div className="flex items-center justify-center">
                       <StudentRowActions
                         student={student}

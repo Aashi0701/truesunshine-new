@@ -1,6 +1,13 @@
 "use client";
 
-import { CalendarDays, GraduationCap, Phone, UserRound } from "lucide-react";
+import {
+  CalendarDays,
+  GraduationCap,
+  Phone,
+  UserRound,
+  Venus,
+  Mars,
+} from "lucide-react";
 
 import AdmissionRowActions from "./AdmissionRowActions";
 import type { AdmissionRow } from "./types";
@@ -125,6 +132,14 @@ export default function AdmissionsTable({
 
               const parentPhone = admission.parent?.phone;
 
+              const isFemale = admission.sex?.toUpperCase() === "FEMALE";
+
+              const StudentIcon = isFemale ? Venus : Mars;
+
+              const studentIconClass = isFemale
+                ? "bg-pink-50 text-pink-600"
+                : "bg-blue-50 text-blue-600";
+
               return (
                 <tr
                   key={admission.id}
@@ -132,17 +147,15 @@ export default function AdmissionsTable({
                 >
                   <td className="px-4 py-3.5">
                     <div className="flex items-center gap-3">
-                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
-                        <GraduationCap className="h-4 w-4" />
+                      <div
+                        className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${studentIconClass}`}
+                      >
+                        <StudentIcon className="h-4 w-4" />
                       </div>
 
                       <div className="min-w-0">
                         <p className="truncate font-semibold text-slate-800">
                           {studentName || "Unnamed Student"}
-                        </p>
-
-                        <p className="mt-0.5 text-xs text-slate-400">
-                          {admission.sex}
                         </p>
                       </div>
                     </div>
@@ -160,11 +173,11 @@ export default function AdmissionsTable({
                         {admission.class?.name ?? "—"}
                       </p>
 
-                      {admission.rollNo && (
+                      {/* {admission.rollNo && (
                         <p className="mt-0.5 text-xs text-slate-400">
                           Roll No. {admission.rollNo}
                         </p>
-                      )}
+                      )} */}
                     </div>
                   </td>
 

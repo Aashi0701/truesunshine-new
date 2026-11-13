@@ -41,9 +41,7 @@ interface TeacherAttendanceToolbarProps {
   onAttendanceFilterChange: (value: AttendanceFilter) => void;
 
   total: number;
-
   onRefresh: () => void;
-
   activeFilterCount?: number;
 }
 
@@ -51,26 +49,11 @@ const sortOptions: {
   value: AttendanceSortOption;
   label: string;
 }[] = [
-  {
-    value: "name-asc",
-    label: "Name (A–Z)",
-  },
-  {
-    value: "name-desc",
-    label: "Name (Z–A)",
-  },
-  {
-    value: "status",
-    label: "Attendance Status",
-  },
-  {
-    value: "marked-first",
-    label: "Marked First",
-  },
-  {
-    value: "pending-first",
-    label: "Pending First",
-  },
+  { value: "name-asc", label: "Name A–Z" },
+  { value: "name-desc", label: "Name Z–A" },
+  { value: "status", label: "Attendance Status" },
+  { value: "marked-first", label: "Marked First" },
+  { value: "pending-first", label: "Pending First" },
 ];
 
 export default function TeacherAttendanceToolbar({
@@ -86,146 +69,189 @@ export default function TeacherAttendanceToolbar({
 }: TeacherAttendanceToolbarProps) {
   const [filtersOpen, setFiltersOpen] = useState(false);
 
-  const selectedSort =
-    sortOptions.find((option) => option.value === sortBy)?.label ??
-    "Name (A–Z)";
+  const getSortLabel = () => {
+    switch (sortBy) {
+      case "name-asc":
+        return "Name A–Z";
+      case "name-desc":
+        return "Name Z–A";
+      case "status":
+        return "Status";
+      case "marked-first":
+        return "Marked First";
+      case "pending-first":
+        return "Pending First";
+      default:
+        return "Sort";
+    }
+  };
 
   return (
     <>
-      <div className="rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
-        <div className="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
-          <div className="flex min-w-0 flex-1 flex-col gap-3 sm:flex-row sm:items-center">
-            <div className="relative min-w-0 flex-1 xl:max-w-md">
-              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+      <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <div className="flex flex-col gap-3 p-3 sm:p-3.5 xl:flex-row xl:items-center xl:justify-between">
+          {/* SEARCH + RESULT COUNT */}
+          <div className="flex min-w-0 flex-1 items-center gap-3">
+            <div className="relative min-w-0 flex-1 xl:max-w-xl">
+              <Search
+                aria-hidden="true"
+                className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
+              />
 
               <input
                 type="text"
                 value={search}
                 onChange={(event) => onSearchChange(event.target.value)}
-                placeholder="Search teacher..."
-                className="
-                  h-10
-                  w-full
-                  rounded-xl
-                  border
-                  border-slate-200
-                  bg-slate-50
-                  pl-9
-                  pr-9
-                  text-sm
-                  text-slate-700
-                  outline-none
-                  transition
-                  placeholder:text-slate-400
-                  focus:border-indigo-300
-                  focus:bg-white
-                  focus:ring-2
-                  focus:ring-indigo-100
-                "
+                placeholder="Search teachers..."
+                aria-label="Search teachers"
+                className="h-10 w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-10 text-sm font-medium text-slate-900 outline-none transition-all duration-150 placeholder:text-slate-400 hover:border-slate-300 hover:bg-white focus:border-blue-400 focus:bg-white focus:ring-4 focus:ring-blue-50"
               />
 
               {search && (
                 <button
                   type="button"
                   onClick={() => onSearchChange("")}
-                  className="
-                    absolute
-                    right-2
-                    top-1/2
-                    flex
-                    h-7
-                    w-7
-                    -translate-y-1/2
-                    items-center
-                    justify-center
-                    rounded-lg
-                    text-slate-400
-                    transition
-                    hover:bg-slate-100
-                    hover:text-slate-600
-                  "
                   aria-label="Clear search"
+                  title="Clear search"
+                  className="absolute right-2 top-1/2 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-lg text-slate-400 transition hover:bg-slate-100 hover:text-slate-600"
                 >
-                  <X className="h-4 w-4" />
+                  <X className="h-3.5 w-3.5" />
                 </button>
               )}
             </div>
 
-            <div className="text-sm text-slate-500">
-              Showing{" "}
-              <span className="font-semibold text-slate-700">{total}</span>{" "}
-              {total === 1 ? "teacher" : "teachers"}
+            {/* DESKTOP RESULT COUNT */}
+            <div className="hidden shrink-0 items-center gap-1.5 whitespace-nowrap rounded-lg bg-slate-50 px-2.5 py-2 text-xs sm:flex">
+              <span className="text-slate-400">Showing</span>
+              <span className="font-semibold text-slate-700">
+                {total.toLocaleString()}
+              </span>
+              <span className="text-slate-400">
+                {total === 1 ? "teacher" : "teachers"}
+              </span>
             </div>
           </div>
 
+          {/* TOOLBAR ACTIONS */}
           <div className="flex flex-wrap items-center gap-2">
+            {/* MOBILE RESULT COUNT */}
+            <div className="mr-auto flex items-center gap-1.5 rounded-lg bg-slate-50 px-2.5 py-2 text-xs text-slate-500 sm:hidden">
+              <span>Showing</span>
+              <span className="font-semibold text-slate-700">
+                {total.toLocaleString()}
+              </span>
+              <span>{total === 1 ? "teacher" : "teachers"}</span>
+            </div>
+
+            {/* REFRESH */}
             <Button
               type="button"
               variant="outline"
-              size="icon"
+              size="sm"
               onClick={onRefresh}
-              className="h-10 w-10 rounded-xl border-slate-200"
               aria-label="Refresh teacher attendance"
+              title="Refresh attendance"
+              className="h-10 w-10 shrink-0 rounded-xl border-slate-200 bg-white p-0 text-slate-500 shadow-none transition-all hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600"
             >
               <RefreshCw className="h-4 w-4" />
             </Button>
 
+            {/* SORT */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
                   type="button"
                   variant="outline"
-                  className="h-10 rounded-xl border-slate-200 px-3"
+                  size="sm"
+                  className="h-10 shrink-0 gap-2 rounded-xl border-slate-200 bg-white px-3 font-medium text-slate-700 shadow-none transition-all hover:border-violet-200 hover:bg-violet-50 hover:text-violet-700"
                 >
-                  <ArrowUpDown className="mr-2 h-4 w-4 text-slate-500" />
+                  <ArrowUpDown className="h-4 w-4 text-violet-500" />
 
-                  <span className="hidden sm:inline">{selectedSort}</span>
+                  <span className="hidden md:inline">{getSortLabel()}</span>
 
-                  <span className="sm:hidden">Sort</span>
+                  <span className="md:hidden">Sort</span>
                 </Button>
               </DropdownMenuTrigger>
 
-              <DropdownMenuContent align="end" className="w-[190px] rounded-xl">
-                {sortOptions.map((option) => (
-                  <DropdownMenuItem
-                    key={option.value}
-                    onClick={() => onSortChange(option.value)}
-                    className="flex items-center justify-between"
-                  >
-                    <span>{option.label}</span>
+              <DropdownMenuContent
+                align="end"
+                sideOffset={5}
+                className="w-60 overflow-hidden rounded-xl border-slate-200 bg-white p-1.5 shadow-lg"
+              >
+                <div className="px-2.5 py-2">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+                    Sort Attendance
+                  </p>
+                  <p className="mt-0.5 text-[11px] text-slate-400">
+                    Choose how teachers are ordered
+                  </p>
+                </div>
 
-                    {sortBy === option.value && (
-                      <Check className="h-4 w-4 text-indigo-600" />
-                    )}
-                  </DropdownMenuItem>
-                ))}
+                <DropdownMenuSeparator className="my-1" />
 
-                <DropdownMenuSeparator />
+                <div
+                  className="max-h-[120px] overflow-y-auto pr-0.5 [&::-webkit-scrollbar]:w-1.5
+                    [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-slate-100
+                    [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-300
+                    hover:[&::-webkit-scrollbar-thumb]:bg-slate-400
+                  "
+                >
+                  {sortOptions.map((option) => {
+                    const isActive = sortBy === option.value;
 
-                <DropdownMenuItem onClick={() => onSortChange("name-asc")}>
+                    return (
+                      <DropdownMenuItem
+                        key={option.value}
+                        onClick={() => onSortChange(option.value)}
+                        className={`mb-0.5 cursor-pointer rounded-lg px-2.5 py-2 text-sm transition-colors focus:outline-none ${
+                          isActive
+                            ? "bg-violet-50 font-medium text-violet-700"
+                            : "text-slate-700"
+                        }`}
+                      >
+                        <span className="flex-1">{option.label}</span>
+
+                        {isActive && (
+                          <Check className="h-4 w-4 shrink-0 text-violet-600" />
+                        )}
+                      </DropdownMenuItem>
+                    );
+                  })}
+                </div>
+
+                {/* <DropdownMenuSeparator className="my-1" />
+
+                <DropdownMenuItem
+                  onClick={() => onSortChange("name-asc")}
+                  className="cursor-pointer rounded-lg px-2.5 py-2 text-sm text-slate-500"
+                >
                   Reset Sort
-                </DropdownMenuItem>
+                </DropdownMenuItem> */}
               </DropdownMenuContent>
             </DropdownMenu>
 
+            {/* FILTERS */}
             <Button
               type="button"
               variant="outline"
+              size="sm"
               onClick={() => setFiltersOpen(true)}
-              className="
-                relative
-                h-10
-                rounded-xl
-                border-slate-200
-                px-3
-              "
+              className={`relative h-10 shrink-0 gap-2 rounded-xl px-3 font-medium shadow-none transition-all ${
+                activeFilterCount > 0
+                  ? "border-amber-200 bg-amber-50 text-amber-700 hover:bg-amber-100"
+                  : "border-slate-200 bg-white text-slate-600 hover:border-amber-200 hover:bg-amber-50 hover:text-amber-700"
+              }`}
             >
-              <SlidersHorizontal className="mr-2 h-4 w-4 text-slate-500" />
+              <SlidersHorizontal
+                className={`h-4 w-4 ${
+                  activeFilterCount > 0 ? "text-amber-600" : "text-amber-500"
+                }`}
+              />
 
-              <span>Filters</span>
+              <span className="hidden md:inline">Filters</span>
 
               {activeFilterCount > 0 && (
-                <span className="ml-2 flex h-5 min-w-5 items-center justify-center rounded-full bg-amber-500 px-1.5 text-[10px] font-bold text-white">
+                <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-amber-500 px-1.5 text-[10px] font-bold text-white">
                   {activeFilterCount}
                 </span>
               )}
@@ -234,6 +260,7 @@ export default function TeacherAttendanceToolbar({
         </div>
       </div>
 
+      {/* FILTER DRAWER */}
       <TeacherAttendanceFiltersDrawer
         open={filtersOpen}
         onOpenChange={setFiltersOpen}

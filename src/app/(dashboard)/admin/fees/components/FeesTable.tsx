@@ -360,12 +360,12 @@ export default function FeesTable({
                           {installment.label}
                         </p>
 
-                        {feeStructureTitle &&
+                        {/* {feeStructureTitle &&
                           feeStructureTitle !== installment.label && (
                             <p className="mt-0.5 truncate text-xs text-slate-400">
                               {feeStructureTitle}
                             </p>
-                          )}
+                          )} */}
                       </div>
                     </div>
                   </td>

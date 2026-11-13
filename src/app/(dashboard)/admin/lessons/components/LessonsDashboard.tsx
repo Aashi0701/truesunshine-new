@@ -356,9 +356,9 @@ export default function LessonsDashboard({
     label: subject.name,
   }));
 
-  const classOptions: SelectOption[] = classes.map((cls) => ({
-    value: cls.id,
-    label: `${cls.name} — ${cls.academicYear.label}`,
+  const classOptions = classes.map((item) => ({
+    value: item.id,
+    label: item.name,
   }));
 
   const teacherOptions: SelectOption[] = teachers.map((teacher) => ({

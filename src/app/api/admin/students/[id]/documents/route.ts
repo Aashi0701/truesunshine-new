@@ -20,26 +20,18 @@ const REQUIRED_DOCUMENTS = [
     title: "Transfer Certificate",
   },
   {
-    type: DocumentType.ADDRESS_PROOF,
-    title: "Address Proof",
-  },
-  {
     type: DocumentType.PARENT_AADHAAR,
     title: "Parent Aadhaar",
+  },
+  {
+    type: DocumentType.ADDRESS_PROOF,
+    title: "Address Proof",
   },
   {
     type: DocumentType.MEDICAL_CERTIFICATE,
     title: "Medical Certificate",
   },
-  {
-    type: DocumentType.PREVIOUS_REPORT,
-    title: "Previous School Report",
-  },
-  {
-    type: DocumentType.CASTE_CERTIFICATE,
-    title: "Caste Certificate",
-  },
-];
+] as const;
 
 export async function GET(
   request: NextRequest,
@@ -53,98 +45,98 @@ export async function GET(
     const { id } = await params;
 
     const student = await prisma.student.findUnique({
-      where: {
-        id,
+      where: { id },
+      select: {
+        id: true,
+        admissionNo: true,
+        name: true,
+        surname: true,
+        img: true,
       },
     });
 
     if (!student) {
       return NextResponse.json(
-        {
-          success: false,
-          message: "Student not found.",
-        },
-        {
-          status: 404,
-        },
+        { success: false, message: "Student not found." },
+        { status: 404 },
       );
     }
 
-    console.log("Route studentId:", id);
-
     const uploadedDocuments = await prisma.studentDocument.findMany({
-      where: {
-        studentId: id,
-      },
-      orderBy: {
-        uploadedAt: "desc",
-      },
-    });
-
-    console.log(JSON.stringify(uploadedDocuments, null, 2));
-
-    console.log({
-      id: student?.id,
-      admissionNo: student?.admissionNo,
-      name: student?.name,
-      surname: student?.surname,
+      where: { studentId: id },
+      orderBy: { uploadedAt: "desc" },
     });
 
     const documents = REQUIRED_DOCUMENTS.map((required) => {
-      const uploaded = uploadedDocuments.find(
-        (doc) => doc.documentType === required.type,
-      );
+      // Student Photo is stored on Student.img during admission.
+      if (required.type === DocumentType.STUDENT_PHOTO) {
+        if (!student.img) {
+          return {
+            id: 0,
+            title: required.title,
+            type: required.type,
+            status: "MISSING" as const,
+          };
+        }
 
-      if (!uploaded) {
         return {
           id: 0,
           title: required.title,
           type: required.type,
-          status: "MISSING",
+          status: "UPLOADED" as const,
+          originalFileName: "Student Photo",
+          publicId: "",
+          fileUrl: student.img,
+          uploadedAt: null,
+        };
+      }
+
+      const document = uploadedDocuments.find(
+        (item) => item.documentType === required.type,
+      );
+
+      if (!document) {
+        return {
+          id: 0,
+          title: required.title,
+          type: required.type,
+          status: "MISSING" as const,
         };
       }
 
       return {
-        id: uploaded.id,
+        id: document.id,
         title: required.title,
         type: required.type,
-        status: "UPLOADED",
-        originalFileName: uploaded.originalFileName,
-        publicId: uploaded.publicId,
-        fileUrl: uploaded.fileUrl,
-        uploadedAt: uploaded.uploadedAt,
+        status: "UPLOADED" as const,
+        originalFileName: document.originalFileName,
+        publicId: document.publicId,
+        fileUrl: document.fileUrl,
+        uploadedAt: document.uploadedAt,
       };
     });
 
-    const uploaded = documents.filter((d) => d.status === "UPLOADED").length;
+    const uploaded = documents.filter(
+      (document) => document.status === "UPLOADED",
+    ).length;
 
-    const missing = documents.filter((d) => d.status === "MISSING").length;
-
-    console.log("Mapped documents:");
-    console.log(JSON.stringify(documents, null, 2));
+    const missing = documents.length - uploaded;
 
     return NextResponse.json({
       success: true,
-
       summary: {
         uploaded,
         missing,
-        total: REQUIRED_DOCUMENTS.length,
+        total: documents.length,
       },
-
       documents,
     });
   } catch (error) {
-    console.error(error);
+    console.error("Failed to load student documents:", error);
 
     return NextResponse.json(
-      {
-        success: false,
-        message: "Failed to load documents.",
-      },
-      {
-        status: 500,
-      },
+      { success: false, message: "Failed to load documents." },
+      { status: 500 },
     );
   }
 }

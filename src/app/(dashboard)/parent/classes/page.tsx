@@ -195,7 +195,7 @@ export default async function ParentClassesPage({ searchParams }: Props) {
                 text-slate-950
               "
             >
-              {childName}&apos;s Classes
+              Classes
             </h1>
 
             <School className="h-5 w-5 text-[#4B517D]" />

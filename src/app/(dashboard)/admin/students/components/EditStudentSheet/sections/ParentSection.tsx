@@ -15,14 +15,14 @@ export default function ParentSection({
   control,
 }: ParentSectionProps) {
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 px-3">
       {/* Section Header */}
       <div>
-        <h3 className="text-lg font-semibold text-slate-900">
+        <h3 className="text-sm font-semibold text-slate-900">
           Parent Information
         </h3>
 
-        <p className="mt-1 text-sm text-slate-500">
+        <p className="mt-1 text-xs text-slate-500">
           Update the parent or guardian details.
         </p>
       </div>

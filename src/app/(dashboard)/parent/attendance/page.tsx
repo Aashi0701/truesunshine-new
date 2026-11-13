@@ -172,13 +172,6 @@ export default async function ParentAttendancePage({ searchParams }: Props) {
 
   const selectedYear = Number(params.year) || now.getFullYear();
 
-  /*
-   * IMPORTANT:
-   * Keep the same short month format used by Teacher My Attendance.
-   *
-   * September = "Sep"
-   * NOT "Sept"
-   */
   const selectedMonth = new Date(0, selectedMonthNumber - 1).toLocaleString(
     "default",
     {
@@ -282,7 +275,7 @@ export default async function ParentAttendancePage({ searchParams }: Props) {
         text-slate-950
       "
             >
-              {childName} - {student.class?.name || "Class"}
+              {student.class?.name || "Class"}
             </h1>
 
             <CalendarDays className="h-5 w-5 text-[#4B517D]" />

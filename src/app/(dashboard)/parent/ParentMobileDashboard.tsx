@@ -86,7 +86,7 @@ export default function ParentMobileDashboard({
       icon: <ClipboardList />,
       iconBg: "bg-[#F6EBDD]",
       iconColor: "text-[#B87938]",
-      onClick: () => router.push("/parent/homework"),
+      onClick: () => router.push("/parent/assignments"),
     },
     {
       title: "Exams",

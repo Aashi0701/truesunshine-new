@@ -52,10 +52,13 @@ export default async function FeeStructuresPage() {
     },
   }));
 
-  const classOptions = classes.map((item) => ({
-    value: String(item.id),
-    label: item.name,
-  }));
+  const classOptions = [
+    { value: "all", label: "All Classes" },
+    ...classes.map((item) => ({
+      value: String(item.id),
+      label: item.name,
+    })),
+  ];
 
   const summary = {
     totalStructures: feeStructures.length,

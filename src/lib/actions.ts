@@ -1,6 +1,5 @@
 "use server";
 
-import bcrypt from "bcryptjs";
 import prisma from "./prisma";
 import { clerkAdmin } from "./clerkAdmin";
 import { auth } from "@clerk/nextjs/server";
@@ -1702,28 +1701,85 @@ export async function deleteAttendance(
 }
 
 // FeeForm
+
 export async function createFee(
   _prevState: ActionState,
   data: FeeStructureFormValues,
 ): Promise<ActionState> {
   try {
-    await prisma.feeStructure.create({
-      data: {
-        classId: data.classId,
-        title: data.title,
-        annualFee: data.annualFee,
-        admissionFee: data.admissionFee,
-        isActive: data.isActive,
+    const classIds =
+      data.classId === "all"
+        ? (
+            await prisma.class.findMany({
+              select: { id: true },
+              orderBy: { name: "asc" },
+            })
+          ).map((item) => item.id)
+        : [data.classId];
+
+    if (classIds.length === 0) {
+      return {
+        success: false,
+        error: "No classes available to create fee structures.",
+      };
+    }
+
+    // Find classes that already have this active fee title.
+    const existingFees = await prisma.feeStructure.findMany({
+      where: {
+        classId: { in: classIds },
+        title: data.title.trim(),
+        isActive: true,
+      },
+      select: {
+        classId: true,
       },
     });
 
-    return { success: true };
+    const existingClassIds = new Set(existingFees.map((fee) => fee.classId));
+
+    const classIdsToCreate = classIds.filter(
+      (classId) => !existingClassIds.has(classId),
+    );
+
+    if (classIdsToCreate.length === 0) {
+      return {
+        success: false,
+        error:
+          "This active fee structure already exists for all selected classes.",
+      };
+    }
+
+    await prisma.$transaction(
+      classIdsToCreate.map((classId) =>
+        prisma.feeStructure.create({
+          data: {
+            classId,
+            title: data.title.trim(),
+            annualFee: data.annualFee,
+            admissionFee: data.admissionFee,
+            isActive: data.isActive,
+          },
+        }),
+      ),
+    );
+
+    const skippedCount = classIds.length - classIdsToCreate.length;
+
+    return {
+      success: true,
+      ...(skippedCount > 0
+        ? {
+            error: `Fee structure created for ${classIdsToCreate.length} class(es). ${skippedCount} class(es) skipped because the same active fee already exists.`,
+          }
+        : {}),
+    };
   } catch (e) {
     console.error("Create Fee Structure Error:", e);
 
     return {
       success: false,
-      error: "Failed to create fee structure",
+      error: "Failed to create fee structure.",
     };
   }
 }
@@ -1732,14 +1788,52 @@ export async function updateFee(
   _prevState: ActionState,
   data: FeeStructureFormValues & { id: number },
 ): Promise<ActionState> {
+  if (data.classId === "all") {
+    return {
+      success: false,
+      error:
+        "Select an individual class when updating an existing fee structure.",
+    };
+  }
+
   try {
+    const existingRecord = await prisma.feeStructure.findUnique({
+      where: { id: data.id },
+      select: { id: true },
+    });
+
+    if (!existingRecord) {
+      return {
+        success: false,
+        error: "Fee structure not found.",
+      };
+    }
+
+    const duplicate = data.isActive
+      ? await prisma.feeStructure.findFirst({
+          where: {
+            classId: data.classId,
+            title: data.title.trim(),
+            isActive: true,
+            NOT: { id: data.id },
+          },
+          select: { id: true },
+        })
+      : null;
+
+    if (duplicate) {
+      return {
+        success: false,
+        error:
+          "An active fee structure with this title already exists for this class.",
+      };
+    }
+
     await prisma.feeStructure.update({
-      where: {
-        id: data.id,
-      },
+      where: { id: data.id },
       data: {
         classId: data.classId,
-        title: data.title,
+        title: data.title.trim(),
         annualFee: data.annualFee,
         admissionFee: data.admissionFee,
         isActive: data.isActive,
@@ -1752,7 +1846,7 @@ export async function updateFee(
 
     return {
       success: false,
-      error: "Failed to update fee structure",
+      error: "Failed to update fee structure.",
     };
   }
 }
@@ -1780,37 +1874,70 @@ export async function deleteFee(_prevState: ActionState, formData: FormData) {
 }
 
 // Fee Structure
+
 export const createFeeStructure = async (
   _prevState: ActionState,
   data: FeeStructureFormValues,
 ): Promise<ActionState> => {
   try {
-    const existing = await prisma.feeStructure.findFirst({
-      where: {
-        classId: data.classId,
-        isActive: true,
-      },
-      select: {
-        id: true,
-      },
-    });
+    // Resolve selected class IDs.
+    const classIds =
+      data.classId === "all"
+        ? (
+            await prisma.class.findMany({
+              select: { id: true },
+              orderBy: { name: "asc" },
+            })
+          ).map((item) => item.id)
+        : [data.classId];
 
-    if (existing) {
+    if (classIds.length === 0) {
       return {
         success: false,
-        error: "An active fee structure already exists for this class.",
+        error: "No classes available to create fee structures.",
       };
     }
 
-    await prisma.feeStructure.create({
-      data: {
-        classId: data.classId,
-        title: data.title,
-        annualFee: data.annualFee,
-        admissionFee: data.admissionFee,
-        isActive: data.isActive,
+    // Check for existing active fee structures with the same title.
+    const existingFees = await prisma.feeStructure.findMany({
+      where: {
+        classId: { in: classIds },
+        title: data.title.trim(),
+        isActive: true,
+      },
+      select: {
+        classId: true,
       },
     });
+
+    const existingClassIds = new Set(existingFees.map((fee) => fee.classId));
+
+    const classIdsToCreate = classIds.filter(
+      (classId) => !existingClassIds.has(classId),
+    );
+
+    if (classIdsToCreate.length === 0) {
+      return {
+        success: false,
+        error:
+          "An active fee structure with this title already exists for all selected classes.",
+      };
+    }
+
+    // Create one fee structure per eligible class atomically.
+    await prisma.$transaction(
+      classIdsToCreate.map((classId) =>
+        prisma.feeStructure.create({
+          data: {
+            classId,
+            title: data.title.trim(),
+            annualFee: data.annualFee,
+            admissionFee: data.admissionFee,
+            isActive: data.isActive,
+          },
+        }),
+      ),
+    );
 
     return {
       success: true,
@@ -1836,10 +1963,37 @@ export const updateFeeStructure = async (
     };
   }
 
+  if (data.classId === "all") {
+    return {
+      success: false,
+      error:
+        "All Classes is available only when creating fee structures. Select an individual class when editing.",
+    };
+  }
+
   try {
+    // Confirm the fee structure exists.
+    const current = await prisma.feeStructure.findUnique({
+      where: {
+        id: data.id,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    if (!current) {
+      return {
+        success: false,
+        error: "Fee structure not found.",
+      };
+    }
+
+    // Prevent duplicate active fee titles within the same class.
     const existing = await prisma.feeStructure.findFirst({
       where: {
         classId: data.classId,
+        title: data.title.trim(),
         isActive: true,
         NOT: {
           id: data.id,
@@ -1850,10 +2004,11 @@ export const updateFeeStructure = async (
       },
     });
 
-    if (existing) {
+    if (existing && data.isActive) {
       return {
         success: false,
-        error: "Another active fee structure already exists for this class.",
+        error:
+          "Another active fee structure with this title already exists for this class.",
       };
     }
 
@@ -1863,7 +2018,7 @@ export const updateFeeStructure = async (
       },
       data: {
         classId: data.classId,
-        title: data.title,
+        title: data.title.trim(),
         annualFee: data.annualFee,
         admissionFee: data.admissionFee,
         isActive: data.isActive,
@@ -2154,9 +2309,7 @@ export async function assignFeeAction(
         },
       });
 
-      /* ----------------------------------------------------------
-         ADMISSION
-      ---------------------------------------------------------- */
+      /* ADMISSION */
 
       await tx.studentFee.create({
         data: {
@@ -2174,9 +2327,7 @@ export async function assignFeeAction(
         },
       });
 
-      /* ----------------------------------------------------------
-         TERM 1
-      ---------------------------------------------------------- */
+      /* TERM 1 */
 
       await tx.studentFee.create({
         data: {
@@ -3062,7 +3213,6 @@ export async function saveStudentAttendance({
   attendance: Record<string, "PRESENT" | "ABSENT">;
 }) {
   try {
-
     if (!date) {
       return {
         success: false,

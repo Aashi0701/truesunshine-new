@@ -288,22 +288,9 @@ export default function ParentsToolbar({
                   type="button"
                   variant="outline"
                   size="sm"
-                  className="
-                    h-10
-                    shrink-0
-                    gap-2
-                    rounded-xl
-                    border-slate-200
-                    bg-white
-                    px-3
-                    font-medium
-                    text-slate-700
-                    shadow-none
-                    transition-all
-                    hover:border-violet-200
-                    hover:bg-violet-50
-                    hover:text-violet-700
-                  "
+                  className="h-10 shrink-0 gap-2 rounded-xl border-slate-200 bg-white px-3 font-medium 
+                  text-slate-700 shadow-none transition-all hover:border-violet-200 hover:bg-violet-50 
+                  hover:text-violet-700"
                 >
                   <ArrowUpDown className="h-4 w-4 text-violet-500" />
 
@@ -316,25 +303,10 @@ export default function ParentsToolbar({
               <DropdownMenuContent
                 align="end"
                 sideOffset={5}
-                className="
-                  w-60
-                  rounded-xl
-                  border-slate-200
-                  bg-white
-                  p-1.5
-                  shadow-lg
-                "
+                className="w-60 overflow-hidden rounded-xl border-slate-200 bg-white p-1.5 shadow-lg"
               >
                 <div className="px-2.5 py-2">
-                  <p
-                    className="
-                      text-xs
-                      font-semibold
-                      uppercase
-                      tracking-wide
-                      text-slate-400
-                    "
-                  >
+                  <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
                     Sort Parents
                   </p>
 
@@ -345,7 +317,11 @@ export default function ParentsToolbar({
 
                 <DropdownMenuSeparator className="my-1" />
 
-                <div className="max-h-64 overflow-y-auto">
+                <div className="max-h-[120px] overflow-y-auto pr-0.5 [&::-webkit-scrollbar]:w-1.5
+                    [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-slate-100
+                    [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-300
+                    hover:[&::-webkit-scrollbar-thumb]:bg-slate-400
+                  ">
                   {sortOptions.map((option) => {
                     const isActive = sortBy === option.value;
 

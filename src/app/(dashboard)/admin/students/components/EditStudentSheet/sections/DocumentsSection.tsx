@@ -68,7 +68,7 @@ export default function DocumentsSection({ studentId }: DocumentsSectionProps) {
 
   const requiredTypes = [
     "BIRTH_CERTIFICATE",
-    "AADHAAR_CARD",
+    "STUDENT_AADHAAR",
     "PARENT_AADHAAR",
     "ADDRESS_PROOF",
   ];
@@ -98,7 +98,7 @@ export default function DocumentsSection({ studentId }: DocumentsSectionProps) {
       : 0;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 px-3">
       <SectionHeader
         title="Student Documents"
         description="Upload, replace and manage admission documents."

@@ -234,7 +234,7 @@ export default async function ParentResultsPage({ searchParams }: Props) {
                 text-slate-950
               "
             >
-              {student.name}&apos;s Results
+              Results
             </h1>
 
             <GraduationCap className="h-5 w-5 text-[#4B517D]" />

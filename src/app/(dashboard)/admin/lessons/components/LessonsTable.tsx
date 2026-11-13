@@ -135,9 +135,9 @@ export default function LessonsTable({
                         {lesson.name}
                       </p>
 
-                      <p className="text-[11px] leading-4 text-slate-400">
+                      {/* <p className="text-[11px] leading-4 text-slate-400">
                         Lesson #{lesson.id}
-                      </p>
+                      </p> */}
                     </div>
                   </div>
                 </td>
@@ -164,11 +164,11 @@ export default function LessonsTable({
                       {lesson.class.name}
                     </p>
 
-                    <div className="flex items-center gap-1 text-[11px] leading-4 text-slate-400">
+                    {/* <div className="flex items-center gap-1 text-[11px] leading-4 text-slate-400">
                       <CalendarDays className="h-3 w-3" />
 
                       <span>{lesson.class.academicYear.label}</span>
-                    </div>
+                    </div> */}
                   </div>
                 </td>
 
@@ -202,11 +202,11 @@ export default function LessonsTable({
                         {lesson.teacher.name} {lesson.teacher.surname}
                       </p>
 
-                      <div className="flex items-center gap-1 text-[11px] leading-4 text-slate-400">
+                      {/* <div className="flex items-center gap-1 text-[11px] leading-4 text-slate-400">
                         <UserRound className="h-3 w-3" />
 
                         <span>Teacher</span>
-                      </div>
+                      </div> */}
                     </div>
                   </div>
                 </td>

@@ -1,21 +1,13 @@
 "use client";
 
-import {
-  Archive,
-  RotateCcw,
-  Trash2,
-  Download,
-  X,
-} from "lucide-react";
+import { RotateCcw, Trash2, Download, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
 interface StudentBulkToolbarProps {
   count: number;
-
   archived?: boolean;
 
-  onArchive?: () => void;
   onRestore?: () => void;
   onDelete?: () => void;
   onExport?: () => void;
@@ -25,19 +17,17 @@ interface StudentBulkToolbarProps {
 export default function StudentBulkToolbar({
   count,
   archived = false,
-
-  onArchive,
   onRestore,
   onDelete,
   onExport,
   onClear,
 }: StudentBulkToolbarProps) {
   return (
-    <div className="rounded-xl border border-blue-200 bg-indigo-50 p-4 shadow-sm">
+    <div className="rounded-xl border border-blue-200 bg-indigo-50 p-3 shadow-sm">
       <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-        {/* Left */}
+        {/* Selected students */}
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-600 text-white">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue-600 text-white">
             {count}
           </div>
 
@@ -52,19 +42,12 @@ export default function StudentBulkToolbar({
           </div>
         </div>
 
-        {/* Right */}
+        {/* Bulk actions */}
         <div className="flex flex-wrap items-center gap-2">
-          {!archived ? (
-            <Button
-              onClick={onArchive}
-              className="bg-amber-600 hover:bg-amber-700"
-            >
-              <Archive className="mr-2 h-4 w-4" />
-              Archive
-            </Button>
-          ) : (
+          {archived && (
             <>
               <Button
+                type="button"
                 onClick={onRestore}
                 className="bg-emerald-600 hover:bg-emerald-700"
               >
@@ -73,6 +56,7 @@ export default function StudentBulkToolbar({
               </Button>
 
               <Button
+                type="button"
                 onClick={onDelete}
                 className="bg-red-600 hover:bg-red-700"
               >
@@ -82,18 +66,12 @@ export default function StudentBulkToolbar({
             </>
           )}
 
-          <Button
-            variant="outline"
-            onClick={onExport}
-          >
+          <Button type="button" variant="outline" onClick={onExport}>
             <Download className="mr-2 h-4 w-4" />
             Export
           </Button>
 
-          <Button
-            variant="ghost"
-            onClick={onClear}
-          >
+          <Button type="button" variant="ghost" onClick={onClear}>
             <X className="mr-2 h-4 w-4" />
             Clear
           </Button>

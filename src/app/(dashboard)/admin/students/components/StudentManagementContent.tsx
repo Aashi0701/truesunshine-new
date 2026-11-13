@@ -414,9 +414,9 @@ export default function StudentManagementDashboard({
 
               <div className="rounded-lg border border-blue-200 bg-blue-50 p-3">
                 <p className="text-xs text-blue-700">
-                  The student&apos;s academic records, attendance, fees and reports
-                  will be preserved. This student can be restored at any time
-                  from the <strong>Archived Students</strong> section.
+                  The student&apos;s academic records, attendance, fees and
+                  reports will be preserved. This student can be restored at any
+                  time from the <strong>Archived Students</strong> section.
                 </p>
               </div>
             </div>
@@ -616,7 +616,6 @@ export default function StudentManagementDashboard({
         <StudentBulkToolbar
           count={selectedIds.length}
           archived={archived}
-          onArchive={() => setBulkArchiveOpen(true)}
           onRestore={() => setBulkRestoreOpen(true)}
           onDelete={() => setBulkDeleteOpen(true)}
           onExport={() => setExportOpen(true)}

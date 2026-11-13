@@ -73,22 +73,25 @@ export default function MobileMonthDropdown({
 
           <div
             className="
-              absolute
-              right-0
-              top-14
-              z-[100]
-              w-[150px]
-              rounded-[26px]
-              border
-              border-slate-100
-              bg-white
-              p-2
-              shadow-[0_20px_50px_rgba(15,23,42,0.12)]
-            "
+    absolute
+    right-0
+    top-14
+    z-[100]
+    w-[150px]
+    max-h-[200px]
+    overflow-y-auto
+    overscroll-contain
+    scrollbar-hide
+    rounded-[22px]
+    border
+    border-slate-100
+    bg-white
+    p-2
+    shadow-[0_20px_50px_rgba(15,23,42,0.12)]
+  "
           >
             {months.map((month, index) => {
               const monthNumber = index + 1;
-
               const isSelected = selectedMonth === month;
 
               const href = `/parent/attendance?studentId=${encodeURIComponent(
@@ -101,25 +104,26 @@ export default function MobileMonthDropdown({
                   href={href}
                   onClick={() => setOpen(false)}
                   className={`
-                    flex
-                    w-full
-                    items-center
-                    justify-between
-                    rounded-2xl
-                    px-4
-                    py-3
-                    transition-all
-                    ${
-                      isSelected
-                        ? "bg-[#4B517D] text-white"
-                        : "text-slate-700 hover:bg-[#F8F8FC]"
-                    }
-                  `}
+          flex
+          min-h-9
+          w-full
+          items-center
+          justify-between
+          rounded-xl
+          px-3
+          py-2
+          transition-colors
+          ${
+            isSelected
+              ? "bg-[#4B517D] text-white"
+              : "text-slate-700 hover:bg-[#F8F8FC]"
+          }
+        `}
                 >
-                  <span className="text-[14px] font-semibold">{month}</span>
+                  <span className="text-[13px] font-semibold">{month}</span>
 
                   {isSelected && (
-                    <span className="h-2 w-2 rounded-full bg-white" />
+                    <span className="h-1.5 w-1.5 rounded-full bg-white" />
                   )}
                 </Link>
               );

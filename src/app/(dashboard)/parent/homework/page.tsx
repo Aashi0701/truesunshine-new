@@ -211,7 +211,7 @@ export default async function ParentHomeworkPage({
                 text-slate-950
               "
             >
-              {student.name}&apos;s Homework
+              Homework
             </h1>
 
             <BookOpenCheck className="h-5 w-5 text-[#4B517D]" />

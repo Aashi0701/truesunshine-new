@@ -2,7 +2,7 @@
 
 import { useEffect, useTransition } from "react";
 import { toast } from "react-toastify";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import {
@@ -23,13 +23,22 @@ interface FeeStructureFormProps {
   onSubmit: (values: FeeStructureFormValues) => void | Promise<void>;
 }
 
+const DEFAULT_ADMISSION_FEE = 11500;
+
 const defaultValues: FeeStructureFormInput = {
-  classId: 0,
+  classId: undefined,
   title: "",
   annualFee: 0,
-  admissionFee: 11500,
+  admissionFee: DEFAULT_ADMISSION_FEE,
   isActive: true,
 };
+
+const formatINR = (amount: number) =>
+  new Intl.NumberFormat("en-IN", {
+    style: "currency",
+    currency: "INR",
+    maximumFractionDigits: 0,
+  }).format(amount);
 
 export default function FeeStructureForm({
   mode,
@@ -44,9 +53,25 @@ export default function FeeStructureForm({
 
   const form = useForm<FeeStructureFormInput, any, FeeStructureFormValues>({
     resolver: zodResolver(feeStructureSchema),
-
     defaultValues: initialData ?? defaultValues,
   });
+
+  const annualFee = useWatch({
+    control: form.control,
+    name: "annualFee",
+  });
+
+  const admissionFee = useWatch({
+    control: form.control,
+    name: "admissionFee",
+  });
+
+  const totalAnnualFee = Math.max(0, Number(annualFee) || 0);
+  const includedAdmissionFee = Math.max(0, Number(admissionFee) || 0);
+
+  const remainingFee = Math.max(0, totalAnnualFee - includedAdmissionFee);
+
+  const termFee = remainingFee / 2;
 
   useEffect(() => {
     form.reset(initialData ?? defaultValues);
@@ -54,6 +79,14 @@ export default function FeeStructureForm({
 
   const handleSubmit = (values: FeeStructureFormValues) => {
     if (disabled) return;
+
+    if (values.admissionFee > values.annualFee) {
+      form.setError("admissionFee", {
+        type: "validate",
+        message: "Admission fee cannot exceed the total annual fee.",
+      });
+      return;
+    }
 
     startTransition(async () => {
       try {
@@ -74,8 +107,8 @@ export default function FeeStructureForm({
         title="Fee Structure"
         description={
           mode === "create"
-            ? "Create the annual fee structure for a class."
-            : "Update the annual fee structure for this class."
+            ? "Create the total annual fee structure for a class."
+            : "Update the total annual fee structure for this class."
         }
       >
         <FormSelect
@@ -85,6 +118,7 @@ export default function FeeStructureForm({
           placeholder="Select class"
           required
           options={classOptions}
+          valueAsNumber
           emptyTitle="No Classes Available"
           emptyDescription="Create a class before creating a fee structure."
           disabled={disabled}
@@ -94,7 +128,7 @@ export default function FeeStructureForm({
           control={form.control}
           name="title"
           label="Fee Title"
-          placeholder="e.g. Nursery Annual Fee"
+          placeholder="e.g. Grade 2 Annual Fee"
           required
           disabled={disabled}
         />
@@ -102,10 +136,10 @@ export default function FeeStructureForm({
         <FormInput
           control={form.control}
           name="annualFee"
-          label="Annual Fee"
+          label="Total Annual Fee"
           type="number"
           min={1}
-          placeholder="40000"
+          placeholder="80000"
           required
           disabled={disabled}
         />
@@ -113,7 +147,7 @@ export default function FeeStructureForm({
         <FormInput
           control={form.control}
           name="admissionFee"
-          label="Admission Fee"
+          label="Admission Fee (Included)"
           type="number"
           min={0}
           placeholder="11500"
@@ -121,13 +155,65 @@ export default function FeeStructureForm({
           disabled={disabled}
         />
 
-        <div className="col-span-full rounded-lg border border-indigo-100 bg-indigo-50/50 px-3 py-2.5">
-          <p className="text-xs leading-5 text-slate-500">
-            <span className="font-semibold text-indigo-600">Tip:</span> The
-            annual fee is used during admission. The admission fee is fixed at
-            ₹11,500 by default, and the remaining amount is split between Term 1
-            and Term 2.
+        <div className="col-span-full space-y-3 rounded-lg border border-indigo-100 bg-indigo-50/50 p-3">
+          <p className="text-xs leading-5 text-slate-600">
+            <span className="font-semibold text-indigo-600">Important:</span>{" "}
+            The admission fee is included in the total annual fee. It is
+            deducted first; only the remaining balance is split between Term 1
+            and Term 2. It is not added again.
           </p>
+
+          <div className="space-y-2 rounded-md border border-indigo-100 bg-white p-3">
+            <div className="flex items-center justify-between gap-3 text-sm">
+              <span className="text-slate-600">Total annual fee</span>
+              <span className="font-semibold text-slate-900">
+                {formatINR(totalAnnualFee)}
+              </span>
+            </div>
+
+            <div className="flex items-center justify-between gap-3 text-sm">
+              <span className="text-slate-600">Admission fee (included)</span>
+              <span className="font-medium text-slate-900">
+                − {formatINR(includedAdmissionFee)}
+              </span>
+            </div>
+
+            <div className="flex items-center justify-between gap-3 border-t border-slate-100 pt-2 text-sm">
+              <span className="text-slate-600">Remaining fee</span>
+              <span className="font-semibold text-slate-900">
+                {formatINR(remainingFee)}
+              </span>
+            </div>
+
+            <div className="flex items-center justify-between gap-3 text-sm">
+              <span className="text-slate-600">Term 1 (estimated)</span>
+              <span className="font-medium text-slate-900">
+                {formatINR(termFee)}
+              </span>
+            </div>
+
+            <div className="flex items-center justify-between gap-3 text-sm">
+              <span className="text-slate-600">Term 2 (estimated)</span>
+              <span className="font-medium text-slate-900">
+                {formatINR(termFee)}
+              </span>
+            </div>
+
+            <div className="flex items-center justify-between gap-3 border-t border-indigo-100 pt-2">
+              <span className="font-semibold text-slate-900">
+                Total payable
+              </span>
+              <span className="text-lg font-bold text-indigo-700">
+                {formatINR(totalAnnualFee)}
+              </span>
+            </div>
+          </div>
+
+          {includedAdmissionFee > totalAnnualFee && (
+            <p className="text-xs font-medium text-red-600">
+              Admission fee cannot exceed the total annual fee.
+            </p>
+          )}
         </div>
       </FormSection>
     </form>

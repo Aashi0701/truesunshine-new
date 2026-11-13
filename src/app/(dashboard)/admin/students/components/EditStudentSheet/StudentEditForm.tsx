@@ -2,9 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-
 import type { Student } from "@/types/student";
-
 import PersonalSection from "./sections/PersonalSection";
 import AcademicSection from "./sections/AcademicSection";
 import ParentSection from "./sections/ParentSection";
@@ -96,9 +94,7 @@ export default function StudentEditForm({
         onSubmit={handleSubmit(onSubmit)}
         className="flex h-full min-h-0 flex-col bg-slate-50"
       >
-        {/* ==================================================
-            Tabs
-        ================================================== */}
+        {/* Tabs */}
 
         <div className="shrink-0 border-b border-slate-200 bg-white">
           <div className="flex h-12 px-5">
@@ -119,16 +115,7 @@ export default function StudentEditForm({
                   {tab.label}
 
                   {active && (
-                    <span
-                      className="
-                        absolute
-                        inset-x-2
-                        bottom-0
-                        h-0.5
-                        rounded-full
-                        bg-indigo-600
-                      "
-                    />
+                    <span className="absolute inset-x-2 bottom-0 h-0.5 rounded-full bg-indigo-600"/>
                   )}
                 </button>
               );
@@ -136,9 +123,7 @@ export default function StudentEditForm({
           </div>
         </div>
 
-        {/* ==================================================
-            Content
-        ================================================== */}
+        {/* Content */}
 
         <div className="min-h-0 flex-1 overflow-y-auto">
           <div className="px-5 py-4">
@@ -154,44 +139,18 @@ export default function StudentEditForm({
           </div>
         </div>
 
-        {/* ==================================================
-            Footer
-        ================================================== */}
+        {/* Footer */}
 
         {showFormFooter && (
-          <div
-            className="
-              flex
-              shrink-0
-              items-center
-              justify-end
-              gap-2
-              border-t
-              border-slate-200
-              bg-white
-              px-5
-              py-3
-            "
-          >
+          <div className="flex shrink-0 items-center justify-end gap-2 border-t border-slate-200 
+          bg-white px-5 py-3">
             <button
               type="button"
               onClick={onClose}
               disabled={saving}
-              className="
-                rounded-lg
-                border
-                border-slate-200
-                bg-white
-                px-4
-                py-2
-                text-sm
-                font-medium
-                text-slate-700
-                transition
-                hover:bg-slate-50
-                disabled:cursor-not-allowed
-                disabled:opacity-60
-              "
+              className=" rounded-lg border border-slate-200 bg-white px-4 py-2
+              text-sm font-medium text-slate-700 transition hover:bg-slate-50
+              disabled:cursor-not-allowed disabled:opacity-60"
             >
               Cancel
             </button>
@@ -199,22 +158,9 @@ export default function StudentEditForm({
             <button
               type="submit"
               disabled={saving}
-              className="
-                inline-flex
-                items-center
-                justify-center
-                rounded-lg
-                bg-indigo-600
-                px-4
-                py-2
-                text-sm
-                font-medium
-                text-white
-                transition
-                hover:bg-indigo-700
-                disabled:cursor-not-allowed
-                disabled:opacity-60
-              "
+              className="inline-flex items-center justify-center rounded-lg bg-indigo-600 px-4 py-2 
+              text-sm font-medium text-white transition hover:bg-indigo-700 
+              disabled:cursor-not-allowed disabled:opacity-60"
             >
               {saving ? "Saving..." : "Save Changes"}
             </button>

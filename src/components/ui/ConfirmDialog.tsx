@@ -103,11 +103,13 @@ export default function ConfirmDialog({
             <Image
               src={illustrationSrc}
               alt={illustrationAlt}
+              width={240}
+              height={160}
               className={`
-                object-contain
-                object-center
-                ${illustrationClassName}
-              `}
+    object-contain
+    object-center
+    ${illustrationClassName}
+  `}
             />
           </div>
         )}
@@ -147,10 +149,7 @@ export default function ConfirmDialog({
               {title}
             </AlertDialogTitle>
 
-            <AlertDialogDescription
-              asChild
-              className="mt-2"
-            >
+            <AlertDialogDescription asChild className="mt-2">
               <div
                 className="
                   text-sm

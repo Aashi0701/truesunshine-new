@@ -9,20 +9,12 @@ import DatePicker from "react-datepicker";
 
 import "react-datepicker/dist/react-datepicker.css";
 
-import {
-  createLesson,
-  updateLesson,
-} from "@/lib/actions";
+import { createLesson, updateLesson } from "@/lib/actions";
 
-import {
-  lessonSchema,
-  LessonFormValues,
-} from "@/lib/formValidationSchemas";
+import { lessonSchema, LessonFormValues } from "@/lib/formValidationSchemas";
 
 import FormInput from "@/components/ui/form/FormInput";
-import FormSelect, {
-  SelectOption,
-} from "@/components/ui/form/FormSelect";
+import FormSelect, { SelectOption } from "@/components/ui/form/FormSelect";
 import FormSection from "@/components/ui/form/FormSection";
 
 interface LessonFormProps {
@@ -42,21 +34,15 @@ function dateToTimeValue(date?: Date) {
 
   const value = new Date(date);
 
-  const hours = String(
-    value.getHours(),
-  ).padStart(2, "0");
+  const hours = String(value.getHours()).padStart(2, "0");
 
-  const minutes = String(
-    value.getMinutes(),
-  ).padStart(2, "0");
+  const minutes = String(value.getMinutes()).padStart(2, "0");
 
   return `${hours}:${minutes}`;
 }
 
 function timeValueToDate(value: string) {
-  const [hours, minutes] = value
-    .split(":")
-    .map(Number);
+  const [hours, minutes] = value.split(":").map(Number);
 
   const date = new Date();
 
@@ -92,8 +78,7 @@ export default function LessonForm({
 }: LessonFormProps) {
   const router = useRouter();
 
-  const [isPending, startTransition] =
-    useTransition();
+  const [isPending, startTransition] = useTransition();
 
   const form = useForm<LessonFormValues>({
     resolver: zodResolver(lessonSchema),
@@ -110,8 +95,8 @@ export default function LessonForm({
         | "SATURDAY",
       startTime: new Date(),
       endTime: new Date(),
-      subjectId: 0,
-      classId: 0,
+      subjectId: undefined,
+      classId: undefined,
       teacherId: "",
     },
   });
@@ -140,24 +125,13 @@ export default function LessonForm({
       classId: 0,
       teacherId: "",
     });
-  }, [
-    initialData,
-    mode,
-    form,
-  ]);
+  }, [initialData, mode, form]);
 
-  const onSubmit = (
-    values: LessonFormValues,
-  ) => {
+  const onSubmit = (values: LessonFormValues) => {
     if (isPending) return;
 
-    if (
-      values.endTime.getTime() <=
-      values.startTime.getTime()
-    ) {
-      toast.error(
-        "End time must be after start time.",
-      );
+    if (values.endTime.getTime() <= values.startTime.getTime()) {
+      toast.error("End time must be after start time.");
 
       return;
     }
@@ -165,20 +139,11 @@ export default function LessonForm({
     startTransition(async () => {
       const result =
         mode === "create"
-          ? await createLesson(
-              { success: false },
-              values,
-            )
-          : await updateLesson(
-              { success: false },
-              values,
-            );
+          ? await createLesson({ success: false }, values)
+          : await updateLesson({ success: false }, values);
 
       if (!result.success) {
-        toast.error(
-          result.error ??
-            "Operation failed.",
-        );
+        toast.error(result.error ?? "Operation failed.");
 
         return;
       }
@@ -262,16 +227,11 @@ export default function LessonForm({
         <Controller
           control={form.control}
           name="scheduleDate"
-          render={({
-            field,
-            fieldState,
-          }) => (
+          render={({ field, fieldState }) => (
             <div className="space-y-2">
               <label className="text-sm font-medium">
                 Schedule Date
-                <span className="ml-1 text-red-500">
-                  *
-                </span>
+                <span className="ml-1 text-red-500">*</span>
               </label>
 
               <DatePicker
@@ -284,12 +244,9 @@ export default function LessonForm({
 
                   field.onChange(date);
 
-                  const day =
-                    getDayFromDate(date);
+                  const day = getDayFromDate(date);
 
-                  if (
-                    day !== "SUNDAY"
-                  ) {
+                  if (day !== "SUNDAY") {
                     form.setValue(
                       "day",
                       day as
@@ -345,20 +302,14 @@ export default function LessonForm({
           name="day"
           render={({ field }) => (
             <div className="space-y-2">
-              <label className="text-sm font-medium">
-                Day
-              </label>
+              <label className="text-sm font-medium">Day</label>
 
               <input
                 type="text"
                 value={
                   field.value
-                    ? field.value
-                        .charAt(0)
-                        .toUpperCase() +
-                      field.value
-                        .slice(1)
-                        .toLowerCase()
+                    ? field.value.charAt(0).toUpperCase() +
+                      field.value.slice(1).toLowerCase()
                     : ""
                 }
                 readOnly
@@ -385,29 +336,18 @@ export default function LessonForm({
           <Controller
             control={form.control}
             name="startTime"
-            render={({
-              field,
-              fieldState,
-            }) => (
+            render={({ field, fieldState }) => (
               <div className="space-y-2">
                 <label className="text-sm font-medium">
                   Start Time
-                  <span className="ml-1 text-red-500">
-                    *
-                  </span>
+                  <span className="ml-1 text-red-500">*</span>
                 </label>
 
                 <input
                   type="time"
-                  value={dateToTimeValue(
-                    field.value,
-                  )}
+                  value={dateToTimeValue(field.value)}
                   onChange={(event) => {
-                    field.onChange(
-                      timeValueToDate(
-                        event.target.value,
-                      ),
-                    );
+                    field.onChange(timeValueToDate(event.target.value));
                   }}
                   disabled={isPending}
                   className="
@@ -432,10 +372,7 @@ export default function LessonForm({
 
                 {fieldState.error && (
                   <p className="text-xs text-red-500">
-                    {
-                      fieldState.error
-                        .message
-                    }
+                    {fieldState.error.message}
                   </p>
                 )}
               </div>
@@ -445,29 +382,18 @@ export default function LessonForm({
           <Controller
             control={form.control}
             name="endTime"
-            render={({
-              field,
-              fieldState,
-            }) => (
+            render={({ field, fieldState }) => (
               <div className="space-y-2">
                 <label className="text-sm font-medium">
                   End Time
-                  <span className="ml-1 text-red-500">
-                    *
-                  </span>
+                  <span className="ml-1 text-red-500">*</span>
                 </label>
 
                 <input
                   type="time"
-                  value={dateToTimeValue(
-                    field.value,
-                  )}
+                  value={dateToTimeValue(field.value)}
                   onChange={(event) => {
-                    field.onChange(
-                      timeValueToDate(
-                        event.target.value,
-                      ),
-                    );
+                    field.onChange(timeValueToDate(event.target.value));
                   }}
                   disabled={isPending}
                   className="
@@ -492,10 +418,7 @@ export default function LessonForm({
 
                 {fieldState.error && (
                   <p className="text-xs text-red-500">
-                    {
-                      fieldState.error
-                        .message
-                    }
+                    {fieldState.error.message}
                   </p>
                 )}
               </div>

@@ -52,38 +52,14 @@ interface SortOption {
 }
 
 const sortOptions: SortOption[] = [
-  {
-    value: "date-desc",
-    label: "Leave Date — Newest",
-  },
-  {
-    value: "date-asc",
-    label: "Leave Date — Oldest",
-  },
-  {
-    value: "teacher-asc",
-    label: "Teacher A–Z",
-  },
-  {
-    value: "teacher-desc",
-    label: "Teacher Z–A",
-  },
-  {
-    value: "leaveType-asc",
-    label: "Leave Type A–Z",
-  },
-  {
-    value: "leaveType-desc",
-    label: "Leave Type Z–A",
-  },
-  {
-    value: "status-asc",
-    label: "Status A–Z",
-  },
-  {
-    value: "status-desc",
-    label: "Status Z–A",
-  },
+  { value: "date-desc", label: "Newest First" },
+  { value: "date-asc", label: "Oldest First" },
+  { value: "teacher-asc", label: "Teacher A–Z" },
+  { value: "teacher-desc", label: "Teacher Z–A" },
+  { value: "leaveType-asc", label: "Leave Type A–Z" },
+  { value: "leaveType-desc", label: "Leave Type Z–A" },
+  { value: "status-asc", label: "Status A–Z" },
+  { value: "status-desc", label: "Status Z–A" },
 ];
 
 export default function TeacherLeavesToolbar({
@@ -106,31 +82,23 @@ export default function TeacherLeavesToolbar({
   const getSortLabel = () => {
     switch (sortBy) {
       case "date-desc":
-        return "Date — Newest";
-
+        return "Newest First";
       case "date-asc":
-        return "Date — Oldest";
-
+        return "Oldest First";
       case "teacher-asc":
         return "Teacher A–Z";
-
       case "teacher-desc":
         return "Teacher Z–A";
-
       case "leaveType-asc":
         return "Leave Type A–Z";
-
       case "leaveType-desc":
         return "Leave Type Z–A";
-
       case "status-asc":
         return "Status A–Z";
-
       case "status-desc":
         return "Status Z–A";
-
       default:
-        return "Sort";
+        return "Sort By";
     }
   };
 

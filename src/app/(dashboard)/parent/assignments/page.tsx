@@ -236,7 +236,7 @@ export default async function ParentAssignmentsPage({
                 text-slate-950
               "
             >
-              {student.name}&apos;s Assignments
+              Assignments
             </h1>
 
             <ClipboardList className="h-5 w-5 text-[#4B517D]" />

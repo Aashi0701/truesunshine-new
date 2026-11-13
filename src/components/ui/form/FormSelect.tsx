@@ -82,18 +82,21 @@ export default function FormSelect<
         >
           <RadixSelect
             value={
-              field.value !== undefined &&
-              field.value !== null &&
-              field.value !== ""
-                ? String(field.value)
-                : ""
+              field.value === undefined ||
+              field.value === null ||
+              field.value === "" ||
+              field.value === 0
+                ? ""
+                : String(field.value)
             }
             onChange={(value) => {
               if (valueAsNumber) {
                 field.onChange(
                   value === undefined || value === "" || value === "__empty__"
                     ? undefined
-                    : Number(value),
+                    : value === "all"
+                      ? "all"
+                      : Number(value),
                 );
               } else {
                 field.onChange(value === "__empty__" ? "" : value);

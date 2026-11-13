@@ -43,19 +43,19 @@ export default function HolidaysTable({
                 Holiday
               </th>
 
-              <th className="px-4 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-slate-500">
+              <th className="px-5 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-slate-500">
                 Date
               </th>
 
-              <th className="px-4 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-slate-500">
+              <th className="px-5 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-slate-500">
                 Duration
               </th>
 
-              <th className="px-4 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-slate-500">
+              <th className="px-5 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-slate-500">
                 Created
               </th>
 
-              <th className="w-[110px] px-4 py-3 text-center text-[11px] font-bold uppercase tracking-wider text-slate-500">
+              <th className="w-[110px] px-5 py-3 text-center text-[11px] font-bold uppercase tracking-wider text-slate-500">
                 Actions
               </th>
             </tr>
@@ -68,7 +68,7 @@ export default function HolidaysTable({
                 className="group transition-colors hover:bg-slate-50/70"
               >
                 {/* Holiday */}
-                <td className="px-5 py-4">
+                <td className="px-5 py-2.5">
                   <button
                     type="button"
                     onClick={() => onView(holiday)}
@@ -83,28 +83,28 @@ export default function HolidaysTable({
                         {holiday.title}
                       </p>
 
-                      <p className="mt-0.5 text-xs text-slate-400">
+                      {/* <p className="mt-0.5 text-xs text-slate-400">
                         Holiday #{holiday.id}
-                      </p>
+                      </p> */}
                     </div>
                   </button>
                 </td>
 
                 {/* Date */}
-                <td className="px-4 py-4">
+                <td className="px-5 py-2.5">
                   <div>
                     <p className="text-sm font-medium text-slate-700">
                       {formatDate(holiday.date)}
                     </p>
 
-                    <p className="mt-0.5 text-xs text-slate-400">
+                    {/* <p className="mt-0.5 text-xs text-slate-400">
                       {formatDay(holiday.date)}
-                    </p>
+                    </p> */}
                   </div>
                 </td>
 
                 {/* Duration */}
-                <td className="px-4 py-4">
+                <td className="px-5 py-2.5">
                   {holiday.isFullDay ? (
                     <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700">
                       <Clock3 className="h-3.5 w-3.5" />
@@ -119,14 +119,14 @@ export default function HolidaysTable({
                 </td>
 
                 {/* Created */}
-                <td className="px-4 py-4">
+                <td className="px-5 py-2.5">
                   <p className="text-xs font-medium text-slate-500">
                     {formatDate(holiday.createdAt)}
                   </p>
                 </td>
 
                 {/* Actions */}
-                <td className="px-4 py-4 text-center">
+                <td className="px-5 py-2.5 text-center">
                   <HolidayRowActions
                     item={holiday}
                     onEdit={onEdit}

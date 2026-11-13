@@ -359,7 +359,10 @@ export type FeeSchemaType = z.output<typeof FeeSchema>;
 export const feeStructureSchema = z.object({
   id: z.number().optional(),
 
-  classId: z.coerce.number().min(1, "Class is required"),
+  classId: z.union([
+    z.coerce.number().int().min(1, "Select a valid class"),
+    z.literal("all"),
+  ]),
 
   title: z.string().min(1, "Fee title is required"),
 
@@ -510,17 +513,24 @@ const studentInfoSchema = z.object({
     .string()
     .trim()
     .min(2, "First name must be at least 2 characters.")
-    .max(50),
+    .max(50, "First name cannot exceed 50 characters."),
 
-  surname: z.string().trim().min(1).max(50),
+  surname: z
+    .string()
+    .trim()
+    .min(1, "Last name is required.")
+    .max(50, "Last name cannot exceed 50 characters."),
 
   birthday: z
     .date({
       error: "Date of birth is required.",
     })
-    .optional(),
+    .optional()
+    .refine((value) => value !== undefined, {
+      message: "Date of birth is required.",
+    }),
 
-  bloodType: z.string().trim().min(1),
+  bloodType: z.string().trim().min(1, "Please select a blood group."),
 
   sex: z.enum(["MALE", "FEMALE"], {
     error: "Please select gender.",
